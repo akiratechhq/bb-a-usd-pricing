@@ -2,6 +2,10 @@
 ## Running Forge Tests
 
 ```bash
+
+# install node modules
+yarn
+
 # install forge libraries and dependencies
 forge install
 
