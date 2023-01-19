@@ -1,0 +1,13 @@
+{
+  "name": "bb-a-usd-pricing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/akiratechhq/bb-a-usd-pricing",
+  "license": "MIT",
+  "dependencies": {
+    "@balancer-labs/v2-pool-utils": "^2.0.1",
+    "@balancer-labs/v2-pool-weighted": "^2.0.1",
+    "@balancer-labs/v2-solidity-utils": "^2.0.0",
+    "@balancer-labs/v2-vault": "^2.0.0"
+  }
+}
