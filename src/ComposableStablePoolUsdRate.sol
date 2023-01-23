@@ -3,7 +3,8 @@ pragma solidity ^0.7.3;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from "@balancer-labs/v2-solidity-utils/contracts/openzeppelin/IERC20.sol";
-
+// @todo remove
+// import "forge-std/console.sol";
 
 interface IOracle {
     function latestRoundData()
@@ -65,10 +66,9 @@ interface IAaveLinearPool {
 }
 
 
-contract BbAUsdComputation {
+contract ComposableStablePoolUsdRate {
 
-  // address of `bb-a-usd` pool
-  address constant BB_A_USD_ADDY = 0xA13a9247ea42D743238089903570127DdA72fE44;
+  IComposableStablePool immutable  POOL;
 
   // all the stablecoin vs USD Chainlink pairs return 8 decimals
   uint256 constant ORACLE_FEED_DECIMALS = 8;
@@ -80,24 +80,26 @@ contract BbAUsdComputation {
   // and the oracle that provides the price for that token
   mapping(address => IOracle) oracles;
 
-  // @todo allow passing in the oracle feeds for the stablecoins
-  constructor() public {
+  constructor(address _pool, address[] memory _stablecoins, address[] memory _oracles) {
+    uint256 len = _stablecoins.length;
+    // @todo use Errors lib
+    require(_stablecoins.length == _oracles.length, "_stablecoins and _oracles must be the same length");
+    require(len > 0, "_stablecoins and _oracles must be non-empty");
+    require(_pool != address(0), "_pool address cannot be 0");
+    POOL = IComposableStablePool(_pool);
     // @todo ensure all Chainlink feeds return 8 decimals
     // @todo ensure token addresses are ERC20 compatible
-    oracles[0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48] = IOracle(0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6); // USDC/USD price feed
-    
-    oracles[0xdAC17F958D2ee523a2206206994597C13D831ec7] = IOracle(0x3E7d1eAB13ad0104d2750B8863b489D65364e32D); // USDT/USD price feed
-
-    oracles[0x6B175474E89094C44Da98b954EedeAC495271d0F] = IOracle(0xAed0c38402a5d19df6E4c03F4E2DceD6e29c1ee9); // DAI/USD price feed
+    for(uint256 i = 0; i < len; i++) {
+      oracles[_stablecoins[i]] = IOracle(address(_oracles[i]));
+    }
   }
 
   function getUsdRate() public view returns (uint256 totalLiquidityUsd, uint256 actualSupply, uint256 bbAUSDVal) { 
-    IComposableStablePool pool = IComposableStablePool(BB_A_USD_ADDY);
-    uint256 bptIndex = pool.getBptIndex();
+    uint256 bptIndex = POOL.getBptIndex();
 
     // `getRateProviders` will return 4 addresses, one of which is a nil address
     // because the BPT token has no rate provider
-    IRateProvider[] memory rateProviders = pool.getRateProviders();
+    IRateProvider[] memory rateProviders = POOL.getRateProviders();
     for(uint256 i = 0; i < 4; i++) {
       if (i == bptIndex) {
         // console.log("skipping bptIndex: ", bptIndex);
@@ -111,13 +113,8 @@ contract BbAUsdComputation {
     }
 
     // @todo can getActualSupply be manipulated?
-    actualSupply = pool.getActualSupply();
+    actualSupply = POOL.getActualSupply();
     bbAUSDVal = totalLiquidityUsd * 10**BASE_DECIMALS / actualSupply;
-
-    // console.log("totalLiquidityUsd: ", totalLiquidityUsd);
-    // console.log("actualSupply: ", actualSupply);
-    // console.log("bbAUSDVal: ", bbAUSDVal);
-    // console.log("@block.number: ", block.number);
   }
 
 
