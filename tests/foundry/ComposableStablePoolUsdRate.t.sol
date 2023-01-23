@@ -7,8 +7,7 @@ import {Vm} from "forge-std/Vm.sol";
 import "forge-std/console.sol";
 import {IERC20} from "@balancer-labs/v2-solidity-utils/contracts/openzeppelin/IERC20.sol";
 
-import {ComposableStablePoolUsdRate} from "../../src/ComposableStablePoolUsdRate.sol";
-
+import {ComposableStablePoolUsdRate} from "../../contracts/ComposableStablePoolUsdRate.sol";
 
 contract ComposableStablePoolUsdRateTest is Test {
   // address of `bb-a-usd` pool
@@ -17,6 +16,8 @@ contract ComposableStablePoolUsdRateTest is Test {
   address[] stablecoins;
   address[] oracles;
 
+  // integration test
+  // @todo create unit test: mock oracles and pool
   function testPrice() public {
     stablecoins = [
       0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, // USDC
@@ -38,6 +39,10 @@ contract ComposableStablePoolUsdRateTest is Test {
     console.log("totalLiquidityUsd: %s", totalLiquidityUsd);
     console.log("actualSupply:      %s", actualSupply);
     console.log("bbAUsdValue:       %s", bbAUsdValue);
+
+    assertTrue(totalLiquidityUsd > 0, "totalLiquidityUsd is zero");
+    assertTrue(actualSupply > 0, "actualSupply is zero");
+    assertTrue(bbAUsdValue > 0, "bbAUsdValue is zero");
   }
 }
 
