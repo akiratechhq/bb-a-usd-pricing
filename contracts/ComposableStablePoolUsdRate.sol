@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.7.3;
+pragma solidity 0.7.6;
 pragma experimental ABIEncoderV2;
 
 import {IOracle} from "./interfaces/IOracle.sol";
 import {IComposableStablePool} from "./interfaces/IComposableStablePool.sol";
 import {IAaveLinearPool} from "./interfaces/IAaveLinearPool.sol";
 import {IRateProvider} from "./interfaces/IRateProvider.sol";
+import {IComposableStablePoolUsdRate} from "./interfaces/IComposableStablePoolUsdRate.sol";
 
 import {IERC20} from "@balancer-labs/v2-solidity-utils/contracts/openzeppelin/IERC20.sol";
 
-contract ComposableStablePoolUsdRate {
+
+contract ComposableStablePoolUsdRate is IComposableStablePoolUsdRate {
   IComposableStablePool immutable  POOL;
 
   // all the stablecoin vs USD Chainlink pairs return 8 decimals
@@ -36,7 +38,12 @@ contract ComposableStablePoolUsdRate {
     }
   }
 
-  function getUsdRate() public view returns (uint256 totalLiquidityUsd, uint256 actualSupply, uint256 bbAUSDVal) { 
+  function decimals() public view override returns (uint8) {
+    return uint8(BASE_DECIMALS);
+  }
+
+
+  function getUsdRate() public view override returns (uint256 totalLiquidityUsd, uint256 actualSupply, uint256 bbAUSDVal) { 
     uint256 bptIndex = POOL.getBptIndex();
 
     // `getRateProviders` will return 4 addresses, one of which is a nil address
@@ -58,7 +65,16 @@ contract ComposableStablePoolUsdRate {
     actualSupply = POOL.getActualSupply();
     bbAUSDVal = totalLiquidityUsd * 10**BASE_DECIMALS / actualSupply;
   }
-
+  function latestRoundData() external view override returns (
+      uint80 roundId,
+      int256 answer,
+      uint256 startedAt,
+      uint256 updatedAt,
+      uint80 answeredInRound
+    ) {
+      (,,bbAUSDVal) = this.getUsdRate();
+      return (0, int256(bbAUSDVal), 0, 0, 0);
+    }
 
   /**
    * `mainToken` is the underlying token (stablecoin) and the wrapped token
