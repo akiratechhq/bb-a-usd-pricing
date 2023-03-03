@@ -9,6 +9,9 @@ import {IERC20} from "@balancer-labs/v2-solidity-utils/contracts/openzeppelin/IE
 
 import {ComposableStablePoolUsdRate} from "../../contracts/ComposableStablePoolUsdRate.sol";
 
+
+// run this test with a forked version of mainnet:
+// forge test -v -w --fork-url https://eth-mainnet.g.alchemy.com/v2/[ALCHEMY_KEY]
 contract ComposableStablePoolUsdRateTest is Test {
   // address of `bb-a-usd` pool
   address constant BB_A_USD_ADDY = 0xA13a9247ea42D743238089903570127DdA72fE44;

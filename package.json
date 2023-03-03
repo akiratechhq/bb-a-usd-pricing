@@ -5,6 +5,7 @@
   "repository": "https://github.com/akiratechhq/bb-a-usd-pricing",
   "license": "MIT",
   "dependencies": {
+    "@openzeppelin/contracts": "^3.4.2",
     "@balancer-labs/v2-pool-utils": "^2.0.1",
     "@balancer-labs/v2-pool-weighted": "^2.0.1",
     "@balancer-labs/v2-solidity-utils": "^2.0.0",

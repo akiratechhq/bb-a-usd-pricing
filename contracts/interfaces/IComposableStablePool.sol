@@ -2,8 +2,17 @@
 pragma solidity 0.7.6;
 
 import {IRateProvider} from "./IRateProvider.sol";
+import '@balancer-labs/v2-vault/contracts/interfaces/IVault.sol';
 
 interface IComposableStablePool {
+
+    /**
+     * @dev Returns this Pool's ID, used when interacting with the Vault (to e.g. join the Pool or swap with it).
+     */
+    function getPoolId() external view returns (bytes32);
+
+    function getVault() external view returns (IVault);
+
     /**
      * @dev This function returns the appreciation of BPT relative to the underlying tokens, as an 18 decimal fixed
      * point number. It is simply the ratio of the invariant to the BPT supply.

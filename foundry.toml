@@ -11,8 +11,7 @@ cache_path = 'forge-cache'
 
 # block_timestamp = 1651743369 # Arbitrary Thursday, 5 May 2022 09:36:09
 verbosity = 3
-# check version in hardhat.config.ts when changing this
-solc_version = '0.7.3'
+solc_version = '0.7.6'
 
 auto_detect_solc = true
 block_base_fee_per_gas = 0

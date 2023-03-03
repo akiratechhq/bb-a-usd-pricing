@@ -39,3 +39,8 @@
   integrity sha512-GwPY84j6g7OY1z13wRYYGQeupb6DI3U+s22Ebg2v32djS9CnPzM04GJapURRbKZkpraUOYIcqhEF3Cm1AafAKg==
   dependencies:
     "@balancer-labs/v2-solidity-utils" "2.0.0"
+
+"@openzeppelin/contracts@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.4.2.tgz#d81f786fda2871d1eb8a8c5a73e455753ba53527"
+  integrity sha512-z0zMCjyhhp4y7XKAcDAi3Vgms4T2PstwBdahiO0+9NaGICQKjynK3wduSRplTgk4LXmoO1yfDGO5RbjKYxtuxA==
