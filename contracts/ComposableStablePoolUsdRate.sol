@@ -12,25 +12,29 @@ import {IERC20} from "@balancer-labs/v2-solidity-utils/contracts/openzeppelin/IE
 
 
 /**
- * Given a Composable Stable Pool formed of 3 AaveLinearPools,
+ * Given a Composable Stable Pool (CSP) formed of 3 AaveLinearPools,
  * this contract computes the price of its BPT token relative to USD.
  *
  * For each of the underlying Aave Linear Pools it computes the price
  * of their BPT token in USD:
  *
- *   `aavelp_bpt_price = A_LINEARP.getRate() * CHAINLINK_ORACLE.latestRoundData()`
+ *   `aavelp_bpt_usd_price = A_LINEARP.getRate() * CHAINLINK_ORACLE_PRICE`
  *
- * Where the `CHAINLINK_ORACLE` is the oracle that provides the price
- * for the `mainToken` of the Linear Pool (eg. USDC).
+ * Where the `CHAINLINK_ORACLE_PRICE` is the value returned by
+ * the oracle that provides the price for the `mainToken` of
+ * the Linear Pool (eg. USDC for `bb-a-USDC` pool).
  *
- * The final price of the Composable Stable Pool BPT token is:
+ * The final price of the Composable Stable Pool BPT token in USD is:
  *
  * ```
- *  comp_bpt_price = (
- *    (aavelp_bpt_price1 * liquidity_in_comp_pool1) +
- *    (aavelp_bpt_price2 * liquidity_in_comp_pool2) +
- *    (aavelp_bpt_price3 * liquidity_in_comp_pool3)
- *  ) / COMP_POOL.getActualSupply()
+ *  csp_bpt_price = (
+ *    (aavelp_bpt1_usd_price * liquidity1) +
+ *    (aavelp_bpt2_usd_price * liquidity2) +
+ *    (aavelp_bpt3_usd_price * liquidity3)
+ *  ) / CSP.getActualSupply()
+ *
+ * where: liquidity{1,2,3} is the `cash + managed` value of
+ *   VAULT.getPoolTokenInfo(bb-a-USD.poolId, AaveLinearPool{1,2,3}.address)
  * ```
  */
 contract ComposableStablePoolUsdRate is IOracle {
